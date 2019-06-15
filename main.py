@@ -158,16 +158,17 @@ def submit_0():
     pk3DS_path_value = pk3DS_path.text()
     check()
     
-    
 def submit_1():
-    for i in copy:
-        file = os.path.normcase(os.path.join(edited_path_value,i))
-        dirs = os.path.normcase(os.path.join(luma_line.text(),'luma','titles',tid,i))
-        dirs = dirs[:-2]
-        print(file)
-        print(dirs)
-        os.makedirs(dirs, exist_ok=True)
-        shutil.copy2(file, dirs)
+    if not luma_line.text() ==  '':
+        try:
+            for i in copy:
+                file = os.path.normcase(os.path.join(edited_path_value,i))
+                dirs = os.path.normcase(os.path.join(luma_line.text(),'luma','titles',tid,i))
+                dirs = dirs[:-2]
+                os.makedirs(dirs, exist_ok=True)
+                shutil.copy2(file, dirs)
+        except:
+            exception_dump('Invalid Path', "The path you've asked the program to copy to either is\ninvalid or cannot be written to, try using the browse\nbutton and make sure the folder isn't read only")
 
 def check():
     global copy
@@ -194,12 +195,13 @@ def check():
                 with open(os.path.normcase(os.path.join(pk3DS_path_value,'backup',os.path.basename(os.path.dirname(edited_path_value)),'a',(i[0]+' ('+(i[1].replace('/','')))+')')), 'rb') as b:
                     if not e == b:
                         copy.append(i[1])
-            
-            print(copy)
-            path.hide()
-            copy_window.show()
         except FileNotFoundError:
             exception_dump('FileNotFoundError','One or both of your file paths are incorrect or blank')
+    if not copy == []:
+        print(copy)
+        path.hide()
+        copy_window.show()
+
             
 app = QApplication(['Garc Copy Tool'])
 app.setApplicationName('Garc Copy Tool')
@@ -231,8 +233,10 @@ HLayout0 = QHBoxLayout()
 HLayout1 = QHBoxLayout()
 HLayout2 = QHBoxLayout()
 
+edited_label = QLabel('Enter the path to the RomFS folder you edited in pk3DS')
 edited_path = QLineEdit()
 edited_path.setPlaceholderText('Enter the path to the RomFS folder you edited in pk3DS')
+pk3DS_label = QLabel('Enter the path to your pk3DS folder')
 pk3DS_path = QLineEdit()
 pk3DS_path.setPlaceholderText('Enter the path to your pk3DS folder')
 
@@ -249,7 +253,9 @@ HLayout1.addWidget(pk3DS_path)
 HLayout1.addWidget(pk3DS_browse)
 HLayout2.addWidget(submit0)
 
+layout1.addWidget(edited_label)
 layout1.addLayout(HLayout0)
+layout1.addWidget(pk3DS_label)
 layout1.addLayout(HLayout1)
 layout1.addLayout(HLayout2)
 
@@ -291,6 +297,7 @@ exception_window = QWidget()
 layout3 = QVBoxLayout()
 
 exception_message = QMessageBox()
+exception_message.setStandardButtons(QMessageBox.NoButton)
 exception_message.setStyleSheet("* { selection-background-color: #0278f7; selection-color: white }")
 
 
